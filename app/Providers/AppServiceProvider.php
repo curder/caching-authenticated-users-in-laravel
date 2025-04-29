@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use App\Auth\Providers\CachedEloquentUserProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,9 @@ class AppServiceProvider extends ServiceProvider
         $this->configureModels();
         $this->configureUrl();
         $this->configureVite();
+        auth()->provider('cachedEloquent', function (Application $app, array $config) {
+            return new CachedEloquentUserProvider($app['hash'], $config['model']);
+        });
     }
 
     private function configureCommands(): void
